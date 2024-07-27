@@ -17,8 +17,8 @@ vr::EVRInitError TrackedController::Activate(uint32_t unObjectId)
 
         auto props = vr::VRProperties()->TrackedDeviceToPropertyContainer(m_objectId);
 
-        vr::VRProperties()->SetStringProperty(props, vr::Prop_ManufacturerName_String, "Leapify_Extension");
-        vr::VRProperties()->SetStringProperty(props, vr::Prop_TrackingSystemName_String, "Joycon");
+        vr::VRProperties()->SetStringProperty(props, vr::Prop_ManufacturerName_String, "Nintendo");
+        vr::VRProperties()->SetStringProperty(props, vr::Prop_TrackingSystemName_String, "Leapify_Extension");
         vr::VRProperties()->SetStringProperty(props, vr::Prop_SerialNumber_String, m_role == vr::TrackedControllerRole_LeftHand ? "Joycon_Left" : "Joycon_Right");
 
         vr::VRProperties()->SetInt32Property(props, vr::Prop_DeviceClass_Int32, vr::TrackedDeviceClass_Controller);
@@ -81,6 +81,7 @@ void TrackedController::DebugRequest(const char* pchRequest, char* pchResponseBu
 
 vr::DriverPose_t TrackedController::GetPose()
 {
+    m_pose.deviceIsConnected = true;
     return m_pose;
 }
 
@@ -92,7 +93,6 @@ void TrackedController::Update()
 
 void TrackedController::UpdatePose()
 {
-    m_pose.deviceIsConnected = true;
     vr::VRServerDriverHost()->TrackedDevicePoseUpdated(m_objectId, GetPose(), sizeof(vr::DriverPose_t));
 }
 
