@@ -109,7 +109,7 @@ void InputManager::Disconnect(int deviceId, bool timeout)
 			break; // Unsupported
 	}
 
-	if (m_connected.load() && (!m_Left && !m_Right))
+	if (m_connected.load() && (!m_Left || !m_Right))
 	{
 		m_connected.exchange(false);
 
@@ -120,7 +120,7 @@ void InputManager::Disconnect(int deviceId, bool timeout)
 
 void InputManager::UpdateState(int deviceId, JOY_SHOCK_STATE state, JOY_SHOCK_STATE oldState)
 {
-	m_controllerStates[m_controllerMappings[deviceId]].buttons = state.buttons;
+	m_controllerStates[m_controllerMappings[deviceId]] = state;
 }
 
 void InputManager::Update()
