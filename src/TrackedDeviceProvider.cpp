@@ -28,12 +28,9 @@ void TrackedDeviceProvider::RunFrame()
     stateLeft = m_Input.GetState(vr::TrackedControllerRole_LeftHand);
     stateRight = m_Input.GetState(vr::TrackedControllerRole_RightHand);
 
-    if (m_Input.IsConnected())
-    {
-        m_Left.UpdateInput(stateLeft);
-        m_Right.UpdateInput(stateRight);
-    }
+    m_Left.UpdateInput(stateLeft);
+    m_Right.UpdateInput(stateRight);
 
-    m_Left.Update();
-    m_Right.Update();
+    m_Left.Update(m_Input.IsConnected(vr::TrackedControllerRole_LeftHand));
+    m_Right.Update(m_Input.IsConnected(vr::TrackedControllerRole_RightHand));
 }

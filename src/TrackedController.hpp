@@ -14,7 +14,7 @@ public:
 	void* GetComponent(const char* pchComponentNameAndVersion);
 	void DebugRequest(const char* pchRequest, char* pchResponseBuffer, uint32_t unResponseBufferSize);
 	vr::DriverPose_t GetPose();
-	void Update();
+	void Update(bool connected);
 	void UpdateInput(InputState state);
 private:
 	void UpdatePose();
@@ -25,4 +25,5 @@ private:
 	vr::DriverPose_t m_pose { 0 };
 	vr::VRInputComponentHandle_t m_skeletonHandle { };
 	vr::VRBoneTransform_t m_boneTransform[31] { };
+	vr::VRInputComponentHandle_t m_bindings[10] { };
 };

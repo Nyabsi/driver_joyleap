@@ -29,7 +29,15 @@ InputState InputManager::GetState(vr::ETrackedControllerRole role)
 		{
 			JOY_SHOCK_STATE reportedState = m_controllerStates[JS_TYPE_JOYCON_LEFT];
 
+			state.valid = true;
+			state.trigger = reportedState.lTrigger;
 			state.system = reportedState.buttons & JSMASK_CAPTURE;
+			state.grip = reportedState.buttons & JSMASK_SL;
+			state.thumbClick = reportedState.buttons & JSMASK_LCLICK;
+			state.thumbX = reportedState.stickLX;
+			state.thumbY = reportedState.stickLY;
+			state.bButton = reportedState.buttons & JSMASK_UP;
+			state.aButton = reportedState.buttons & JSMASK_DOWN;
 
 			break;
 		}
@@ -37,7 +45,15 @@ InputState InputManager::GetState(vr::ETrackedControllerRole role)
 		{
 			JOY_SHOCK_STATE reportedState = m_controllerStates[JS_TYPE_JOYCON_RIGHT];
 
-			state.system = reportedState.buttons & JSMASK_HOME;
+			state.valid = true;
+			state.trigger = reportedState.rTrigger;
+			state.system = reportedState.buttons & JSMASK_CAPTURE;
+			state.grip = reportedState.buttons & JSMASK_SR;
+			state.thumbClick = reportedState.buttons & JSMASK_RCLICK;
+			state.thumbX = reportedState.stickRX;
+			state.thumbY = reportedState.stickRY;
+			state.bButton = reportedState.buttons & JSMASK_N;
+			state.aButton = reportedState.buttons & JSMASK_S;
 
 			break;
 		}
@@ -46,6 +62,11 @@ InputState InputManager::GetState(vr::ETrackedControllerRole role)
 	}
 
 	return state;
+}
+
+bool InputManager::IsConnected(vr::ETrackedControllerRole role) const
+{
+	return role == vr::TrackedControllerRole_LeftHand ? m_Left : m_Right;
 }
 
 void InputManager::Connect(int deviceId)
@@ -65,7 +86,7 @@ void InputManager::Connect(int deviceId)
 			break; // Unsupported
 	}
 
-	if (!m_connected && (m_Left && m_Right))
+	if (!m_connected.load() && (m_Left && m_Right))
 	{
 		m_connected.exchange(true);
 
@@ -76,36 +97,30 @@ void InputManager::Connect(int deviceId)
 
 void InputManager::Disconnect(int deviceId, bool timeout)
 {
-	if (!timeout)
+	switch (m_controllerMappings[deviceId])
 	{
-		int deviceType = JslGetControllerType(deviceId);
+		case JS_TYPE_JOYCON_LEFT:
+			m_Left = false;
+			break;
+		case JS_TYPE_JOYCON_RIGHT:
+			m_Right = false;
+			break;
+		default:
+			break; // Unsupported
+	}
 
-		switch (deviceType)
-		{
-			case JS_TYPE_JOYCON_LEFT:
-				m_Left = false;
-				break;
-			case JS_TYPE_JOYCON_RIGHT:
-				m_Right = false;
-				break;
-			default:
-				break; // Unsupported
-		}
+	if (m_connected.load() && (!m_Left && !m_Right))
+	{
+		m_connected.exchange(false);
 
-		if (m_connected && (!m_Left && !m_Right))
-		{
-			m_connected.exchange(false);
-
-			m_thread = std::thread(&InputManager::Update, this);
-			m_thread.detach();
-		}
+		m_thread = std::thread(&InputManager::Update, this);
+		m_thread.detach();
 	}
 }
 
 void InputManager::UpdateState(int deviceId, JOY_SHOCK_STATE state, JOY_SHOCK_STATE oldState)
 {
-	if (state.buttons != oldState.buttons)
-		m_controllerStates[m_controllerMappings[deviceId]].buttons = state.buttons;
+	m_controllerStates[m_controllerMappings[deviceId]].buttons = state.buttons;
 }
 
 void InputManager::Update()

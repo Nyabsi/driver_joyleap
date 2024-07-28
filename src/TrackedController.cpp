@@ -53,6 +53,17 @@ vr::EVRInitError TrackedController::Activate(uint32_t unObjectId)
         vr::VRProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceStandby_String, m_role == vr::TrackedControllerRole_LeftHand ? "{joyleap}/icons/left_controller_status_off.png" : "{leapify}/icons//right_controller_status_off.png");
         vr::VRProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceAlertLow_String, m_role == vr::TrackedControllerRole_LeftHand ? "{joyleap}/icons/left_controller_status_ready_low.png" : "{leapify}/icons//right_controller_status_ready_low.png");
 
+        vr::VRDriverInput()->CreateBooleanComponent(props, "/input/system/click", &m_bindings[0]);
+        vr::VRDriverInput()->CreateBooleanComponent(props, "/input/trigger/click", &m_bindings[1]);
+        vr::VRDriverInput()->CreateScalarComponent(props, "/input/trigger/value", &m_bindings[2], vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedOneSided);
+        vr::VRDriverInput()->CreateScalarComponent(props, "/input/grip/force", &m_bindings[3], vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedOneSided);
+        vr::VRDriverInput()->CreateScalarComponent(props, "/input/grip/value", &m_bindings[4], vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedOneSided);
+        vr::VRDriverInput()->CreateBooleanComponent(props, "/input/thumbstick/click", &m_bindings[5]);
+        vr::VRDriverInput()->CreateScalarComponent(props, "/input/thumbstick/x", &m_bindings[6], vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedTwoSided);
+        vr::VRDriverInput()->CreateScalarComponent(props, "/input/thumbstick/y", &m_bindings[7], vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedTwoSided);
+        vr::VRDriverInput()->CreateBooleanComponent(props, "/input/a/click", &m_bindings[8]);
+        vr::VRDriverInput()->CreateBooleanComponent(props, "/input/b/click", &m_bindings[9]);
+
         if (m_role == vr::TrackedControllerRole_LeftHand)
             vr::VRDriverInput()->CreateSkeletonComponent(props, "/input/skeleton/left", "/skeleton/hand/left", "/pose/raw", vr::VRSkeletalTracking_Full, nullptr, 0, &m_skeletonHandle);
         else
@@ -83,19 +94,31 @@ void TrackedController::DebugRequest(const char* pchRequest, char* pchResponseBu
 
 vr::DriverPose_t TrackedController::GetPose()
 {
-    m_pose.deviceIsConnected = true;
     return m_pose;
 }
 
-void TrackedController::Update()
+void TrackedController::Update(bool connected)
 {
+    m_pose.deviceIsConnected = connected;
     UpdateSkeletalPose();
     UpdatePose();
 }
 
 void TrackedController::UpdateInput(InputState state)
 {
-
+    if (state.valid)
+    {
+        vr::VRDriverInput()->UpdateBooleanComponent(m_bindings[0], state.system, 0.0f);
+        vr::VRDriverInput()->UpdateBooleanComponent(m_bindings[1], state.trigger, 0.0f);
+        vr::VRDriverInput()->UpdateScalarComponent(m_bindings[2], state.trigger ? 1.0f : 0.0f, 0.0f);
+        vr::VRDriverInput()->UpdateScalarComponent(m_bindings[3], state.grip ? 1.0f : 0.0f, 0.0f);
+        vr::VRDriverInput()->UpdateScalarComponent(m_bindings[4], state.grip ? 1.0f : 0.0f, 0.0f);
+        vr::VRDriverInput()->UpdateBooleanComponent(m_bindings[5], state.thumbClick, 0.0f);
+        vr::VRDriverInput()->UpdateScalarComponent(m_bindings[6], state.thumbX, 0.0f);
+        vr::VRDriverInput()->UpdateScalarComponent(m_bindings[7], state.thumbY, 0.0f);
+        vr::VRDriverInput()->UpdateBooleanComponent(m_bindings[8], state.aButton, 0.0f);
+        vr::VRDriverInput()->UpdateBooleanComponent(m_bindings[9], state.bButton, 0.0f);
+    }
 }
 
 void TrackedController::UpdatePose()

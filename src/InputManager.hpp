@@ -10,14 +10,22 @@
 
 struct InputState 
 {
+	bool valid { false };
 	bool system { false };
+	bool trigger { false };
+	bool grip { false };
+	bool thumbClick { false };
+	float thumbX { 0.0f };
+	float thumbY { 0.0f };
+	bool aButton { false };
+	bool bButton { false };
 };
 
 class InputManager {
 public:
 	void Init();
 	InputState GetState(vr::ETrackedControllerRole role);
-	bool IsConnected() const { return m_Left && m_Right; }
+	bool IsConnected(vr::ETrackedControllerRole role) const;
 private:
 	void Connect(int deviceId);
 	void Disconnect(int deviceId, bool timeout);
