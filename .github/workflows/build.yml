@@ -49,7 +49,7 @@ jobs:
       run: |
         mkdir -p ${{ github.workspace }}/dist/joyleap/bin/win64
         cp ${{ github.workspace }}/vendor/JSL/x64/*.dll ${{ github.workspace }}/dist/joyleap/bin/win64
-        cp ${{ steps.strings.outputs.build-output-dir }}/Release/driver_leapify.dll ${{ github.workspace }}/dist/joyleap/bin/win64
+        cp ${{ steps.strings.outputs.build-output-dir }}/Release/driver_joyleap.dll ${{ github.workspace }}/dist/joyleap/bin/win64
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4.3.4
