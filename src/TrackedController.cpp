@@ -1,6 +1,8 @@
 #include <TrackedController.hpp>
 #include <cstring>
 
+#include <Windows.h>
+
 TrackedController::TrackedController(vr::ETrackedControllerRole role)
 {
     m_role = role;
@@ -89,6 +91,11 @@ void TrackedController::Update()
 {
     UpdateSkeletalPose();
     UpdatePose();
+}
+
+void TrackedController::UpdateInput(InputState state)
+{
+
 }
 
 void TrackedController::UpdatePose()

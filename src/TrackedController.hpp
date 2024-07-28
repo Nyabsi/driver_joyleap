@@ -1,5 +1,7 @@
 #pragma once
 
+#include <InputManager.hpp>
+
 #include <openvr_driver.h>
 
 class TrackedController: public vr::ITrackedDeviceServerDriver
@@ -13,6 +15,7 @@ public:
 	void DebugRequest(const char* pchRequest, char* pchResponseBuffer, uint32_t unResponseBufferSize);
 	vr::DriverPose_t GetPose();
 	void Update();
+	void UpdateInput(InputState state);
 private:
 	void UpdatePose();
 	void UpdateSkeletalPose();

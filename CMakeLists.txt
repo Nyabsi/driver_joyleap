@@ -24,7 +24,13 @@ add_library(${PROJECT_NAME} SHARED
 	${SRC_DIR}/main.cpp
 	${SRC_DIR}/TrackedDeviceProvider.cpp
 	${SRC_DIR}/TrackedController.cpp
+	${SRC_DIR}/InputManager.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${SRC_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${EXTERNAL_DIR}/openvr/headers)
+target_include_directories(${PROJECT_NAME} PRIVATE ${VENDOR_DIR}/JSL)
+
+target_link_directories(${PROJECT_NAME} PRIVATE ${VENDOR_DIR}/JSL/x64)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE JoyShockLibrary)

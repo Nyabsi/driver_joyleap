@@ -1,6 +1,8 @@
 #pragma once
 
 #include <TrackedController.hpp>
+#include <InputManager.hpp>
+
 #include <openvr_driver.h>
 
 class TrackedDeviceProvider : public vr::IServerTrackedDeviceProvider 
@@ -24,4 +26,5 @@ public:
 private:
     TrackedController m_Left { vr::ETrackedControllerRole::TrackedControllerRole_LeftHand };
     TrackedController m_Right { vr::ETrackedControllerRole::TrackedControllerRole_RightHand };
+    InputManager m_Input { };
 };

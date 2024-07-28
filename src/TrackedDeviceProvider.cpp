@@ -7,8 +7,10 @@ vr::EVRInitError TrackedDeviceProvider::Init(vr::IVRDriverContext* pDriverContex
 {
     VR_INIT_SERVER_DRIVER_CONTEXT(pDriverContext);
 
-    vr::VRServerDriverHost()->TrackedDeviceAdded("Leap_Left_Hand", vr::TrackedDeviceClass_Controller, &m_Left);
-    vr::VRServerDriverHost()->TrackedDeviceAdded("Leap_Right_Hand", vr::TrackedDeviceClass_Controller, &m_Right);
+    vr::VRServerDriverHost()->TrackedDeviceAdded("Joycon_Left", vr::TrackedDeviceClass_Controller, &m_Left);
+    vr::VRServerDriverHost()->TrackedDeviceAdded("Joycon_Right", vr::TrackedDeviceClass_Controller, &m_Right);
+
+    m_Input.Init();
 
     return vr::VRInitError_None;
 }
@@ -20,6 +22,18 @@ void TrackedDeviceProvider::Cleanup()
 
 void TrackedDeviceProvider::RunFrame()
 {
+    InputState stateLeft { };
+    InputState stateRight { };
+
+    stateLeft = m_Input.GetState(vr::TrackedControllerRole_LeftHand);
+    stateRight = m_Input.GetState(vr::TrackedControllerRole_RightHand);
+
+    if (m_Input.IsConnected())
+    {
+        m_Left.UpdateInput(stateLeft);
+        m_Right.UpdateInput(stateRight);
+    }
+
     m_Left.Update();
     m_Right.Update();
 }
