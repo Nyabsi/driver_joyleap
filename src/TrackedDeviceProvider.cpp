@@ -17,6 +17,7 @@ vr::EVRInitError TrackedDeviceProvider::Init(vr::IVRDriverContext* pDriverContex
 
 void TrackedDeviceProvider::Cleanup()
 {
+    m_Input.Destroy();
     VR_CLEANUP_SERVER_DRIVER_CONTEXT();
 }
 

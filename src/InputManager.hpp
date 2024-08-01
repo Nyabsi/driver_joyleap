@@ -24,6 +24,7 @@ struct InputState
 class InputManager {
 public:
 	void Init();
+	void Destroy();
 	InputState GetState(vr::ETrackedControllerRole role);
 	bool IsConnected(vr::ETrackedControllerRole role) const;
 private:
@@ -37,4 +38,5 @@ private:
 	bool m_Right { false };
 	std::map<int, int> m_controllerMappings;
 	std::map<int, JOY_SHOCK_STATE> m_controllerStates;
+	uint64_t m_lastUpdate { };
 };

@@ -1,4 +1,5 @@
 #include "InputManager.hpp"
+#include <chrono>
 
 #include <JoyShockLibrary.h>
 
@@ -17,6 +18,14 @@ void InputManager::Init()
 
 	m_thread = std::thread(&InputManager::Update, this);
 	m_thread.detach();
+}
+
+void InputManager::Destroy()
+{
+	m_connected.exchange(true);
+
+	if (m_thread.joinable())
+		m_thread.join();
 }
 
 InputState InputManager::GetState(vr::ETrackedControllerRole role)
