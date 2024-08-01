@@ -100,7 +100,8 @@ vr::DriverPose_t TrackedController::GetPose()
 void TrackedController::Update(bool connected)
 {
     m_pose.deviceIsConnected = connected;
-    UpdateSkeletalPose();
+    m_pose.poseIsValid = true;
+
     UpdatePose();
 }
 
@@ -124,9 +125,5 @@ void TrackedController::UpdateInput(InputState state)
 void TrackedController::UpdatePose()
 {
     vr::VRServerDriverHost()->TrackedDevicePoseUpdated(m_objectId, GetPose(), sizeof(vr::DriverPose_t));
-}
-
-void TrackedController::UpdateSkeletalPose()
-{
-    vr::VRDriverInput()->UpdateSkeletonComponent(m_skeletonHandle, vr::VRSkeletalMotionRange_WithoutController, m_boneTransform, 31);
+    vr::VRDriverInput()->UpdateSkeletonComponent(m_skeletonHandle, vr::VRSkeletalMotionRange_WithoutController, nullptr, 0);
 }

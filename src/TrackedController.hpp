@@ -18,12 +18,9 @@ public:
 	void UpdateInput(InputState state);
 private:
 	void UpdatePose();
-	void UpdateSkeletalPose();
-
 	vr::ETrackedControllerRole m_role { vr::ETrackedControllerRole::TrackedControllerRole_Invalid };
 	uint32_t m_objectId { 999 };
 	vr::DriverPose_t m_pose { 0 };
-	vr::VRInputComponentHandle_t m_skeletonHandle { };
-	vr::VRBoneTransform_t m_boneTransform[31] { };
 	vr::VRInputComponentHandle_t m_bindings[10] { };
+	vr::VRInputComponentHandle_t m_skeletonHandle { };
 };
